@@ -4,7 +4,7 @@
 
 Copyright (C) 2026 Robin Güneş.
 
-**Current version:** 2.2.0
+**Current version:** 2.3.0
 
 It brings useful Windows functions together in a command-line application, including keeping the computer awake, controlling display behavior, recording the screen, and managing MCP servers. The MCP application center also discovers installed desktop apps and searches a 100-entry software catalog.
 
@@ -176,6 +176,44 @@ device supplied by your audio driver. Microphone recording remains available
 independently.
 
 Press `Ctrl + C` to stop an active recording.
+
+---
+
+### 🎛️ Live Studio — First Working Stage (v2.3.0)
+
+Open the independent, lightweight studio window from the command prompt:
+
+```text
+/studio
+```
+
+This first stage extends (rather than replaces) the existing MSS → BGRA frame
+pipe → FFmpeg recording path. The compositor produces the frames used by both
+the studio preview and its recording output. Scene collections are autosaved
+under `%APPDATA%\EasyWindowsTools\studio_project.json`; use the studio controls
+to create, duplicate, rename, delete, import, and export scene profiles.
+
+Currently working sources are desktop capture, still images, text, and solid
+color layers. Sources can be reordered, shown/hidden, moved by dragging in the
+preview, and positioned/resized/opacity-adjusted from the properties panel.
+Cut, fade, and dissolve transitions are composited in real time. The record
+control sends the composed 1280×720 scene through the existing FFmpeg H.264/MP4
+encoder; the existing saved microphone/system-audio selections are passed to
+that recorder. Recording runs off the UI thread and can be stopped from the
+studio window.
+
+This is an initial stage, not an OBS-equivalent feature-complete product:
+separate audio channels/meters/filters, webcam/window/game/video/web capture,
+advanced crop/resize handles, plugin isolation, hardware encoder auto-selection,
+live RTMP publishing and stream-key storage are not implemented yet and are
+not presented as working studio controls. The preview FPS is measured and
+shown; system-wide CPU/RAM/GPU and dropped-frame telemetry is not claimed.
+Hardware performance has not been certified on low-end PCs. Current defaults
+favor a 720p canvas and a low preview refresh rate to limit work.
+
+The separate Nova-style timeline editor described in the development request
+has not been started; it is planned as a separate module after the live studio
+core is validated. The studio module and application remain GPL-3.0-only.
 
 ---
 

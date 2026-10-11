@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "easy-windows-tools"
-version = "2.2.0"
-description = "A terminal-based Windows utility suite"
+version = "2.3.0"
+description = "A terminal-based Windows utility suite with a lightweight live studio"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Robin Güneş" }]
@@ -20,6 +20,7 @@ dependencies = [
     "pyautogui>=0.9.54,<1",
     "pyperclip>=1.9,<2",
     "websockets>=14,<16",
+    "Pillow>=10,<12",
 ]
 classifiers = [
     "Operating System :: Microsoft :: Windows",
@@ -30,4 +31,4 @@ classifiers = [
 EWT = "easy_windows_tools:main"
 
 [tool.setuptools]
-py-modules = ["easy_windows_tools", "local_websocket", "websocket_standalone"]
+py-modules = ["easy_windows_tools", "local_websocket", "websocket_standalone", "studio"]

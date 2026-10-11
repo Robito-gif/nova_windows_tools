@@ -940,7 +940,7 @@ except ImportError:
 
 # Windows API Sabitleri
 APP_NAME = "Easy Windows Tools"
-APP_VERSION = "2.2.0"
+APP_VERSION = "2.3.0"
 ES_CONTINUOUS = 0x80000000
 ES_SYSTEM_REQUIRED = 0x00000001
 ES_DISPLAY_REQUIRED = 0x00000002
@@ -1004,6 +1004,7 @@ class KeepAwakeApp:
                     "/record --fps 30", "/record --resolution 1280x720",
                     '/record --microphone "Mikrofon adı"',
                     '/record --system-audio "Stereo Mix"',
+                    "/studio", "stüdyo", "studio",
                     "/ekran", "/ekran liste", "/ekran 1", "/ekran 2", "ekran kaydet",
                     "/MCP create", "/MCP ayarlar", "/my MCP's",
                     ">start MCP", ">stop MCP",
@@ -1011,6 +1012,7 @@ class KeepAwakeApp:
                     "/websocket başlat <ad>", "/websocket start <name>",
                     ">websocket ayarlar", "-websocket create",
                     "-websocket yapmak",
+                    "/studio", "stüdyo", "studio",
                     "/license", "lisans",
                     "/status", "durum",
                     "/help", "yardım", "yardim",
@@ -1184,6 +1186,7 @@ class KeepAwakeApp:
         if not HAS_RICH:
             print("\nKomutlar:\n  başlat [süre] - Uyku engelini başlatır\n  durdur - Uyanık kalmayı kapatır\n  ekran açık/kapalı - Ekran korumasını ayarlar\n  /ekran [numara] - Kayıt için ekranı seçer; /ekran liste ile görüntüle\n  pomodoro - 25 dk odak oturumu\n  toplantı - 60 dk toplantı oturumu\n  /record [süre] - Ekranı MP4 kaydeder; Ctrl+C ile durdurur\n  /record ayarlar - FPS, çözünürlük, mikrofon ve sistem sesi ayarlarını açar\n  /record [süre] --microphone \"Aygıt\" --system-audio \"Stereo Mix\" - İki ses kaynağını kayda ekler\n  /record [süre] --no-audio - Bu kayıt için ses yakalamayı kapatır\n  çalıştır <komut> - Komut bitene kadar uyanık tutar\n  /MCP create - Bir uygulama için MCP sunucusu oluşturur\n  /MCP ayarlar - Uygulama kataloğu ve güvenlik GUI'sini açar\n  >start MCP <ad> - Yerel MCP sunucusunu başlatır\n  >stop MCP <ad> - Yerel MCP sunucusunu durdurur\n  /my MCP's [ad] - MCP sunucularını ve yapılandırmasını gösterir\n  lisans /license - Telif, garanti ve lisans bilgisini gösterir\n  durum - Sistem durumunu gösterir\n  çıkış - Uygulamadan çıkar\n")
             print("  /websocket başlat [ad] - Kayıtlı yerel WebSocket'leri başlatır\n  >websocket ayarlar - WebSocket ayar penceresini açar\n  -websocket create - Yeni WebSocket oluşturur\n")
+            print("  /studio - Sahne ve kaynak kompozisyon stüdyosunu açar\n")
             return
 
         table = Table(box=ROUNDED, border_style=CLAUDE_THEME["secondary"], padding=(0, 1))
@@ -1257,6 +1260,16 @@ class KeepAwakeApp:
             "",
             "/record --no-audio",
             "Bu kayıt için mikrofon ve sistem sesi yakalamayı kapatır"
+        )
+        table.add_row(
+            "",
+            "/studio [dim]/[/] stüdyo",
+            "Sahneler, masaüstü/görsel/metin/renk kaynakları ve kompozit kayıt stüdyosunu açar"
+        )
+        table.add_row(
+            "",
+            "/studio [dim]/[/] stüdyo",
+            "Sahneler, masaüstü/görsel/metin/renk kaynakları ve kompozit kayıt için stüdyoyu açar"
         )
         table.add_section()
         table.add_row(
@@ -1883,7 +1896,14 @@ class KeepAwakeApp:
                 flags=re.IGNORECASE,
             )
 
-            if normalized in {"-websocket create", "-websocket yapmak", "-websocket create/yapmak"}:
+            if normalized in {"/studio", "studio", "stüdyo", "stüdyo aç", "studio open"}:
+                try:
+                    from studio import open_studio
+
+                    open_studio(ScreenRecorder, ScreenRecorder.load_settings())
+                except (ImportError, OSError, RuntimeError, ValueError) as error:
+                    self._print_error(f"Stüdyo açılamadı: {error}")
+            elif normalized in {"-websocket create", "-websocket yapmak", "-websocket create/yapmak"}:
                 try:
                     self.websocket_manager.open_create_gui()
                 except (OSError, RuntimeError, ValueError) as error:
@@ -2375,7 +2395,14 @@ class ScreenRecorder:
                 ) from fallback_error
         return MSS, get_ffmpeg_exe
 
-    def record(self, duration=None, monitor_number=None):
+    def record(
+        self,
+        duration=None,
+        monitor_number=None,
+        frame_provider=None,
+        frame_size=None,
+        stop_event=None,
+    ):
         if os.name != "nt":
             raise RuntimeError("Ekran kaydı yalnızca Windows'ta kullanılabilir.")
         capture_class, get_ffmpeg_exe = self._load_dependencies()
@@ -2396,24 +2423,42 @@ class ScreenRecorder:
                     + ". /record ayarlar komutuyla aygıtları yeniden seçin."
                 )
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = self.output_dir / f"Screen Recording {datetime.now():%Y-%m-%d %H-%M-%S-%f}.mp4"
+        recording_prefix = "Studio Recording" if frame_provider else "Screen Recording"
+        output_path = self.output_dir / f"{recording_prefix} {datetime.now():%Y-%m-%d %H-%M-%S-%f}.mp4"
 
         try:
-            with capture_factory() as capture, ExitStack() as resources:
-                selected_monitor = self.validate_monitor_number(
-                    self.monitor_number if monitor_number is None else monitor_number
-                )
-                if selected_monitor >= len(capture.monitors):
-                    available = max(0, len(capture.monitors) - 1)
-                    raise ValueError(
-                        f"Ekran {selected_monitor} bulunamadı. Bu sistemde {available} ekran var."
+            with ExitStack() as resources:
+                capture = None
+                cursor_overlay = None
+                monitor = None
+                if frame_provider is None:
+                    capture = resources.enter_context(capture_factory())
+                    selected_monitor = self.validate_monitor_number(
+                        self.monitor_number if monitor_number is None else monitor_number
                     )
-                monitor = capture.monitors[selected_monitor]
-                width = monitor["width"]
-                height = monitor["height"]
-                cursor_overlay = resources.enter_context(
-                    _Win32CursorOverlay(width, height, monitor["left"], monitor["top"])
-                )
+                    if selected_monitor >= len(capture.monitors):
+                        available = max(0, len(capture.monitors) - 1)
+                        raise ValueError(
+                            f"Ekran {selected_monitor} bulunamadı. Bu sistemde {available} ekran var."
+                        )
+                    monitor = capture.monitors[selected_monitor]
+                    width = monitor["width"]
+                    height = monitor["height"]
+                    cursor_overlay = resources.enter_context(
+                        _Win32CursorOverlay(width, height, monitor["left"], monitor["top"])
+                    )
+                else:
+                    if (
+                        not isinstance(frame_size, (tuple, list))
+                        or len(frame_size) != 2
+                        or any(type(value) is not int or value < 1 for value in frame_size)
+                    ):
+                        raise ValueError("Özel kare kaynağı için geçerli frame_size=(width, height) gerekir.")
+                    width, height = frame_size
+                    if width * height > 3840 * 2160:
+                        raise ValueError("Özel kare kaynağı 4K piksel sınırını aşıyor.")
+                    if not callable(frame_provider):
+                        raise TypeError("frame_provider çağrılabilir bir kare üreticisi olmalıdır.")
                 video_filter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
                 if self.resolution:
                     output_width, output_height = self.resolution
@@ -2464,8 +2509,18 @@ class ScreenRecorder:
                 frame_count = 0
                 stopped_by_user = False
                 try:
-                    while duration is None or time.perf_counter() - started_at < duration:
-                        frame = cursor_overlay.apply(capture.grab(monitor).bgra)
+                    while (
+                        (duration is None or time.perf_counter() - started_at < duration)
+                        and not (stop_event is not None and stop_event.is_set())
+                    ):
+                        if frame_provider is None:
+                            frame = cursor_overlay.apply(capture.grab(monitor).bgra)
+                        else:
+                            frame = frame_provider()
+                            if not isinstance(frame, bytes) or len(frame) != width * height * 4:
+                                raise ValueError(
+                                    "frame_provider BGRA kareyi width × height × 4 bayt olarak döndürmelidir."
+                                )
                         try:
                             process.stdin.write(frame)
                         except BrokenPipeError:
@@ -2484,6 +2539,8 @@ class ScreenRecorder:
                         delay = next_frame_at - time.perf_counter()
                         if delay > 0:
                             time.sleep(delay)
+                    if stop_event is not None and stop_event.is_set():
+                        stopped_by_user = True
                 except KeyboardInterrupt:
                     stopped_by_user = True
                 finally:
@@ -2492,7 +2549,10 @@ class ScreenRecorder:
                     except (BrokenPipeError, OSError):
                         pass
                     return_code = process.wait()
-                    error_output = process.stderr.read().decode("utf-8", errors="replace")
+                    try:
+                        error_output = process.stderr.read().decode("utf-8", errors="replace")
+                    finally:
+                        process.stderr.close()
                 if return_code != 0:
                     raise RuntimeError(error_output.strip() or f"FFmpeg çıkış kodu: {return_code}")
                 if frame_count == 0:
