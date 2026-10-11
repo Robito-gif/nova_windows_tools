@@ -389,11 +389,16 @@ python -m pip install --user pipx
 python -m pipx ensurepath
 ```
 
-Close and reopen the terminal so the updated `PATH` takes effect. Install Easy Windows Tools directly from GitHub:
+Close and reopen the terminal so the updated `PATH` takes effect. Install or
+reinstall the published v2.2.0 release directly from its GitHub tag:
 
 ```powershell
-python -m pipx install git+https://github.com/Robito-gif/easy-windows-tools.git
+python -m pipx install --force "git+https://github.com/Robito-gif/easy-windows-tools.git@v2.2.0"
 ```
+
+`--force` is important when an older version is already installed: running
+`pipx install` again without it may leave the existing version unchanged. To
+install a later release, replace `v2.2.0` with that release's tag.
 
 You can now launch it from CMD or PowerShell:
 
@@ -402,7 +407,6 @@ start EWT
 ```
 
 To run it in the current terminal instead of opening a new window, use `EWT`.
-To install a newer GitHub version later, run `python -m pipx upgrade easy-windows-tools`.
 
 To work on the source code, clone the repository separately:
 
