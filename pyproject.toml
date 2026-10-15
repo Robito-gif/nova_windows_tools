@@ -3,9 +3,9 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "easy-windows-tools"
-version = "2.3.0"
-description = "A terminal-based Windows utility suite with a lightweight live studio"
+name = "nova-windows-tools"
+version = "2.4.0"
+description = "A professional terminal-based Windows utility platform and ecosystem command architecture"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Robin Güneş" }]
@@ -28,7 +28,10 @@ classifiers = [
 ]
 
 [project.scripts]
+nova = "nova_windows_tools:main"
+NWT = "nova_windows_tools:main"
 EWT = "easy_windows_tools:main"
 
 [tool.setuptools]
-py-modules = ["easy_windows_tools", "local_websocket", "websocket_standalone", "studio"]
+py-modules = ["nova_windows_tools", "easy_windows_tools", "local_websocket", "websocket_standalone", "studio"]
+packages = ["nova", "nova.core", "nova.discovery", "nova.settings", "nova.updates", "nova.cli"]

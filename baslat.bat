@@ -1,10 +1,10 @@
 @echo off
 chcp 65001 >nul
-title Easy Windows Tools
+title Nova Windows Tools
 
 if exist ".venv\Scripts\python.exe" (
-    ".venv\Scripts\python.exe" "easy_windows_tools.py"
+    ".venv\Scripts\python.exe" "nova_windows_tools.py"
 ) else (
-    python "easy_windows_tools.py"
+    python "nova_windows_tools.py"
 )
 pause

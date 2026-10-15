@@ -1,4 +1,4 @@
-"""Lightweight local scene composition and studio UI for Easy Windows Tools.
+"""Lightweight local scene composition and studio UI for Nova Windows Tools.
 
 # Copyright (C) 2026 Robin Güneş
 #
@@ -28,9 +28,11 @@ from typing import Any, Generator
 
 from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageTk
 
-APP_DATA_DIRECTORY = Path(
-    os.environ.get("APPDATA", Path.home() / ".config")
-) / "EasyWindowsTools"
+_BASE_APPDATA = Path(os.environ.get("APPDATA", Path.home() / ".config"))
+APP_DATA_DIRECTORY = _BASE_APPDATA / "NovaWindowsTools"
+if not APP_DATA_DIRECTORY.exists() and (_BASE_APPDATA / "EasyWindowsTools").exists():
+    APP_DATA_DIRECTORY = _BASE_APPDATA / "EasyWindowsTools"
+APP_DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
 DEFAULT_PROJECT_PATH = APP_DATA_DIRECTORY / "studio_project.json"
 PROJECT_SCHEMA = 1
 SUPPORTED_SOURCE_TYPES = {"screen", "image", "text", "color"}
@@ -489,7 +491,7 @@ class StudioWindow:
         self.root.after(250, self._poll_recording)
 
     def _build_ui(self) -> None:
-        self.root.title("Easy Windows Tools · Canlı Stüdyo")
+        self.root.title("Nova Windows Tools · Canlı Stüdyo")
         self.root.geometry("1280x820")
         self.root.minsize(980, 650)
         self.root.configure(bg="#111820")

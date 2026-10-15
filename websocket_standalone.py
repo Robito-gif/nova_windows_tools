@@ -1,4 +1,4 @@
-"""Local-only WebSocket services for Easy Windows Tools."""
+"""Local-only WebSocket services for Nova Windows Tools."""
 
 # Copyright (C) 2026 Robin Güneş
 #
@@ -31,9 +31,11 @@ import websockets
 from websockets.exceptions import ConnectionClosed, InvalidURI
 from websockets.sync.server import ServerConnection, WebSocketServer, serve
 
-APP_DATA_DIRECTORY = Path(
-    os.environ.get("APPDATA", Path.home() / ".config")
-) / "EasyWindowsTools"
+_BASE_APPDATA = Path(os.environ.get("APPDATA", Path.home() / ".config"))
+APP_DATA_DIRECTORY = _BASE_APPDATA / "NovaWindowsTools"
+if not APP_DATA_DIRECTORY.exists() and (_BASE_APPDATA / "EasyWindowsTools").exists():
+    APP_DATA_DIRECTORY = _BASE_APPDATA / "EasyWindowsTools"
+APP_DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
 DEFAULT_DATABASE_PATH = APP_DATA_DIRECTORY / "websocket_services.sqlite3"
 LOCALHOST_ORIGIN = re.compile(r"https?://(localhost|127\.0\.0\.1)(:\d+)?\Z")
 MAX_MESSAGE_BYTES = 1024 * 1024
@@ -557,7 +559,7 @@ class LocalWebSocketManager:
             raise RuntimeError(f"WebSocket ayarları açılamadı: {error}") from error
 
         root = tk.Tk()
-        root.title("Easy Windows Tools · Yerel WebSocket Merkezi")
+        root.title("Nova Windows Tools · Yerel WebSocket Merkezi")
         root.geometry("1050x640")
         root.minsize(850, 520)
         style = ttk.Style(root)

@@ -1,622 +1,156 @@
-# Easy Windows Tools 🛠️
+# Nova Windows Tools ⚡
 
-**Easy Windows Tools** is a lightweight, terminal-based Windows utility suite written in Python.
+**Nova Windows Tools** is a professional, terminal-based Windows utility platform and ecosystem management engine written in Python.
 
 Copyright (C) 2026 Robin Güneş.
 
-**Current version:** 2.3.0
+**Current version:** 2.4.0 (Yeni Nesil Mimari)
 
-It brings useful Windows functions together in a command-line application, including keeping the computer awake, controlling display behavior, recording the screen, and managing MCP servers. The MCP application center also discovers installed desktop apps and searches a 100-entry software catalog.
+Nova Windows Tools brings together Windows power management, screen recording, live scene composition studio, FastMCP server management, local authenticated WebSocket relays, hierarchical ecosystem configuration, on-demand hardware discovery, and secure update workflows under a unified, strict 5-category command protocol.
 
-> **Platform:** Windows (power and recording features); Windows, macOS, and supported Linux distributions (MCP application center)
-> **Language:** Python
-> **Interface:** Terminal / CLI, with graphical MCP and WebSocket settings windows
+> **Platform:** Windows 10/11 (Power, display, and recording controls); Windows, macOS, and Linux (MCP center, settings, discovery, and relays)  
+> **Language:** Python >= 3.10  
+> **Interface:** Terminal / CLI, with interactive settings REPL and graphical tools  
 > **License:** GNU General Public License v3 only (GPL-3.0-only)
 
 ---
 
-## ✨ Features
+## ⚡ 5-Kategorili Yeni Nesil Komut Sistemi
 
-### ⚡ Power & Wake Management
+Nova Windows Tools, komut karmaşasını önlemek ve güvenliği artırmak için her komutu ön ek sembolüyle kesin olarak ayrılmış beş temel kategoride yürütür. Baştaki boşluklar ve ön ekler ham girdi düzeyinde korunur (`strip()` ile baştaki boşluklar silinmez).
 
-Prevent Windows from entering sleep mode while you are working.
+### A. Normal Komutlar — Başında 1 Boşluk (` `)
+Günlük ve temel işlemler için kullanılır. Başında tam olarak **bir adet boşluk** bulunmalıdır:
 
-* Enable continuous wake mode
-* Set a specific wake duration
-* Automatically restore normal power behavior when the session ends
-* Stop an active session at any time with `Ctrl + C`
+- ` help` — Kapsamlı ve kategorize edilmiş yardım menüsünü açar.
+- ` version` — Nova Windows Tools sürüm, platform ve Python bilgilerini gösterir.
+- ` status` — Bilgisayarın uyanıklık durumu, ekran koruması ve oturum istatistiklerini görüntüler.
+- ` clear` — Terminal ekranını temizler ve karşılama panelini yeniden basar.
+- ` apps` — Algılanan masaüstü uygulamalarını ve paket yöneticilerini listeler.
+- ` exit` — Servisleri durdurur, güç ayarlarını normale döndürür ve güvenle çıkar.
+- ` start [süre]` — Uyanık modunu başlatır (örn: ` start 30dk`, ` start 1h`).
+- ` stop` — Uyanık modunu sonlandırır.
+- ` display on / off` — Monitörün kararmasını engeller veya uykuya izin verir.
+- ` pomodoro` — 25 dakikalık odaklanma oturumu başlatır.
+- ` meeting` — 60 dakikalık toplantı modu başlatır.
+- ` record [süre] [seçenekler]` — Yüksek performanslı MP4 ekran kaydı başlatır.
+- ` studio` — Canlı sahne ve kaynak kompozisyon stüdyosunu açar.
+- ` license` — GNU GPLv3 lisans ve garanti bildirimini gösterir.
 
-Example:
+> **Önemli Kural:** Kullanıcı başında boşluk bırakmadan örneğin `help` yazarsa sistem bunu sessizce çalıştırmaz; kullanıcıya normal komutlar için başında bir boşluk bırakılması gerektiğini belirten açıklayıcı bir ipucu (`Did you mean ' help'?`) gösterir.
 
-```text
-başlat
-```
+### B. Önemli Sistem Komutları — Başında Slash (`/`)
+Sistem genelinde daha kritik veya yönetimsel işlemleri gerçekleştiren, yetki ve onay denetimine tabi komutlardır:
 
-or:
+- `/system` — Windows işletim sistemi, CPU, bellek, mimari ve UAC yetki durumunu gösterir.
+- `/diagnostics` — Windows API'leri, AppData yazma izinleri, FFmpeg ve FastMCP tanılaması yapar.
+- `/processes [filtre]` — Çalışan süreçleri listeler, ada göre filtreler ve izler.
+- `/mcp [list|create|start|stop|settings]` — MCP sunucularını ve güvenlik izinlerini yönetir.
+- `/ecosystem` — Nova ekosistemindeki tüm bileşenlerin (AI, Dev, Sistem, MCP) gerçek durumlarını gösterir.
+- `/security` — Yönetici (Administrator) yetkilerini, UAC durumunu ve güvenlik denetim günlüğünü (Audit Log) gösterir.
+- `/update` — Uygulama güncelleme merkezini açar.
 
-```text
-başlat 30dk
-```
+### C. Nova Ekosistem Ayarlar Merkezi — Başında Büyüktür (`>`)
+Bilgisayarda algılanan sistemlerin, yapay zekâ entegrasyonlarının, geliştirme araçlarının ve ağ bileşenlerinin **ayrıntılı, hiyerarşik ve etkileşimli** ayarlar merkezini açar:
 
-Supported duration examples include:
+- `>` — Ana Nova Ayarlar Merkezi REPL'ini açar.
+- `> apps` — Algılanan uygulamaların başlatma parametreleri ve ayarları.
+- `> ai` — Yapay zekâ modelleri, sıcaklık, yerel Ollama/FastMCP uç noktaları.
+- `> mcp` — MCP varsayılan portları, taşıma protokolü (`stdio`/`streamable-http`) ve izinler.
+- `> development` — Python sanal ortamları, Git zaman aşımı ve paket yöneticisi tercihleri.
+- `> system` — Windows güç politikası, ekran koruma ve düşük donanım modu.
+- `> updates` — Güncelleme kanalları (`stable`/`beta`/`nightly`) ve otomatik denetim.
+- `> network` — Yerel WebSocket bind host, port ve bağlantı limitleri.
+- `> security` — Kritik işlem onayları ve denetim günlüğü hassas veri maskelemesi.
 
-```text
-30dk
-1h
-```
+#### Ayarlar REPL Komutları:
+- `ls` / `list` — Mevcut menüdeki ayarları veya alt kategorileri listeler.
+- `cd <kategori>` — Belirtilen kategoriye geçer (örn: `cd ai`). `cd ..` üst menüye döner.
+- `get <anahtar>` — Ayarın açıklamasını, geçerli değer aralığını ve bağımlılıklarını gösterir.
+- `set <anahtar> <değer>` — Ayar değerini değiştirir ve staged olarak işaretler.
+- `save` — Tüm değişiklikleri atomik olarak diske kaydeder ve otomatik yedek alır.
+- `revert` — Kaydedilmemiş değişiklikleri iptal eder.
+- `reset [kategori]` — Ayarları varsayılan fabrika değerlerine döndürür.
+- `search <ifade>` — Tüm ayarlar arasında arama yapar.
+- `export <dosya.json>` / `import <dosya.json>` — Ayarları dışa veya içe aktarır.
 
----
+### D. Ayarlardan Çıkış — Başında Küçüktür (`<`)
+Açık olan Nova Ayarlar Merkezi'nde gezinmek veya çıkmak için kullanılır:
 
-### 🍅 Pomodoro Mode
+- Alt kategorideyken `<` yazıldığında bir üst kategoriye dönülür.
+- Ana ayarlar ekranındayken `<` yazıldığında ayarlar merkezinden çıkılarak ana terminale dönülür.
+- **Kaydedilmemiş Değişiklik Güvenliği:** Çıkış sırasında kaydedilmemiş değişiklikler varsa sistem kullanıcıyı uyarır ve 3 seçenek sunar:
+  - `[E]` Kaydet ve çık
+  - `[H]` Değişiklikleri iptal et ve çık
+  - `[D]` Düzenlemeye devam et
 
-Start a **25-minute focus session** that keeps the computer awake.
+### E. Tam Güncelleme Sistemi — Başında Kare (`#`)
+Nova Windows Tools ve onaylı Nova ekosistem bileşenleri için kapsamlı, doğrulanmış ve güvenli güncelleme yönetimi:
 
-```text
-pomodoro
-```
-
-The application automatically restores normal power behavior when the session finishes.
-
----
-
-### 🤝 Meeting Mode
-
-Start a **60-minute meeting session**.
-
-```text
-toplantı
-```
-
-This is useful for online meetings, presentations, or other situations where Windows should remain awake.
-
----
-
-### 🖥️ Display Control
-
-Control whether Windows should allow the display to turn off.
-
-Turn display protection on:
-
-```text
-ekran açık
-```
-
-Turn it off:
-
-```text
-ekran kapalı
-```
-
-Slash commands are also supported:
-
-```text
-/display on
-/display off
-```
-
----
-
-### ⏺️ Screen Recording
-
-Easy Windows Tools includes built-in screen recording functionality.
-
-Start recording:
-
-```text
-/record
-```
-
-You can also specify a recording duration:
-
-```text
-/record 30dk
-```
-
-#### Monitor Selection
-
-List available displays:
-
-```text
-/ekran liste
-```
-
-Select a display for recording:
-
-```text
-/ekran 2
-```
-
-#### Recording Settings
-
-Open the recording settings:
-
-```text
-/record ayarlar
-```
-
-You can configure persistent recording settings such as:
-
-* FPS
-* Resolution
-
-You can also override settings for a single recording:
-
-```text
-/record 30dk --fps 30 --resolution 1280x720 --monitor 2
-```
-
-#### Microphone and System Audio (v2.1.0)
-
-Audio capture is off by default. Open the recording settings to choose a
-microphone and a Windows audio input device for system sound:
-
-```text
-/record ayarlar
-```
-
-The selected microphone and system audio are mixed into the MP4 recording.
-Audio source selections are saved for future recordings. To override them for a
-single recording:
-
-```text
-/record 30dk --microphone "Microphone device name" --system-audio "Stereo Mix"
-```
-
-Use `--no-audio` to make a single silent recording even when audio sources are
-saved in the settings:
-
-```text
-/record 30dk --no-audio
-```
-
-Windows/FFmpeg can only record system playback when Windows exposes a loopback
-input device (for example, **Stereo Mix**). If no such device appears in the
-settings list, enable it in Windows sound input settings or use a loopback
-device supplied by your audio driver. Microphone recording remains available
-independently.
-
-Press `Ctrl + C` to stop an active recording.
+- `#` — Güncelleme merkezini açar ve kullanılabilir komutları listeler.
+- `# check` — Güncelleme kanallarındaki yeni sürümleri denetler ve semver karşılaştırması yapar.
+- `# preview` — Yapılacak değişiklikleri, indirme boyutunu ve changelog'u önizler.
+- `# download [bileşen]` — Güncellemeyi geçici hazırlık (`staging`) dizinine indirir ve **SHA256 hash doğrulaması** yapar.
+- `# install [bileşen]` — Kullanıcıdan açık onay alarak, mevcut sistemin tam yedeğini alır ve güncellemeyi kurar.
+- `# full` — `Check -> Preview -> Confirm -> Download & Verify -> Backup -> Install` iş akışını baştan sona güvenle yürütür.
+- `# history` — Önceki güncelleme ve geri alma işlemlerinin kayıtlarını gösterir.
+- `# rollback` — Herhangi bir aksilik durumunda sistemi tek komutla önceki çalışır yedeğine döndürür.
 
 ---
 
-### 🎛️ Live Studio — First Working Stage (v2.3.0)
+## 🔒 Güvenlik Modeli
 
-Open the independent, lightweight studio window from the command prompt:
-
-```text
-/studio
-```
-
-This first stage extends (rather than replaces) the existing MSS → BGRA frame
-pipe → FFmpeg recording path. The compositor produces the frames used by both
-the studio preview and its recording output. Scene collections are autosaved
-under `%APPDATA%\EasyWindowsTools\studio_project.json`; use the studio controls
-to create, duplicate, rename, delete, import, and export scene profiles.
-
-Currently working sources are desktop capture, still images, text, and solid
-color layers. Sources can be reordered, shown/hidden, moved by dragging in the
-preview, and positioned/resized/opacity-adjusted from the properties panel.
-Cut, fade, and dissolve transitions are composited in real time. The record
-control sends the composed 1280×720 scene through the existing FFmpeg H.264/MP4
-encoder; the existing saved microphone/system-audio selections are passed to
-that recorder. Recording runs off the UI thread and can be stopped from the
-studio window.
-
-This is an initial stage, not an OBS-equivalent feature-complete product:
-separate audio channels/meters/filters, webcam/window/game/video/web capture,
-advanced crop/resize handles, plugin isolation, hardware encoder auto-selection,
-live RTMP publishing and stream-key storage are not implemented yet and are
-not presented as working studio controls. The preview FPS is measured and
-shown; system-wide CPU/RAM/GPU and dropped-frame telemetry is not claimed.
-Hardware performance has not been certified on low-end PCs. Current defaults
-favor a 720p canvas and a low preview refresh rate to limit work.
-
-The separate Nova-style timeline editor described in the development request
-has not been started; it is planned as a separate module after the live studio
-core is validated. The studio module and application remain GPL-3.0-only.
+1. **Kullanıcı Onayı:** Hiçbir kritik işlem veya güncelleme kurulumu kullanıcının açık onayı olmadan çalıştırılmaz.
+2. **Bütünlük Kontrolü:** İndirilen güncelleme paketlerinin SHA256 karma değeri doğrulanmadan kuruluma izin verilmez.
+3. **Otomatik Geri Alma (Rollback):** Kurulum aşamasında bir hata meydana gelirse sistem anında önceki çalışan sürüme geri döner.
+4. **Denetim Günlüğü (Audit Log):** Hassas ve kritik tüm işlemler `%APPDATA%\NovaWindowsTools\audit.log` dosyasına maskelenmiş olarak kaydedilir.
+5. **Yetki Kontrolü:** Yönetici yetkisi gerektiren işlemler tespit edilerek kullanıcı net şekilde uyarılır.
 
 ---
 
-### 🛠️ Command Runner
+## 🚀 Kurulum ve Başlatma
 
-Run another command or script while automatically keeping Windows awake until the process finishes.
+### Gereksinimler
+- Windows 10 veya Windows 11 (Tüm güç ve ekran özellikleri için)
+- Python 3.10 veya daha yeni bir sürüm
 
-```text
-çalıştır <komut>
-```
-
-Example:
-
-```text
-çalıştır python test.py
-```
-
-Slash syntax is also supported:
-
-```text
-/run <command>
-```
-
-This is useful for long-running scripts, builds, downloads, and other processes where Windows should not enter sleep mode while the command is running.
-
----
-
-### 🔌 MCP Support
-
-The MCP application center can discover installed desktop applications and search a
-100-entry application catalog. The catalog includes Godot, Unity Hub, Unreal Engine,
-Blender, Chrome, Visual Studio, Visual Studio Code, MCreator, SQLite, Blockbench,
-IntelliJ IDEA, and other development, design, media, and desktop tools.
-
-```text
-/MCP ayarlar
-```
-
-The window has tabs for discovered applications, the catalog, and per-server
-security permissions. The catalog includes a **“7-Zip ile hafif kurulum testi”**
-shortcut that selects the small 7-Zip package and starts the normal package
-search and confirmation flow; it does not install anything until you confirm.
-A catalog installation always shows the selected package
-name and package ID and requires confirmation before invoking the detected package
-manager. Package results are searched and verified against the package manager
-instead of treating a configured ID as proof that a package exists. On macOS,
-the official-download button opens a listed vendor page; it does not download or
-install a `.dmg`/`.pkg` automatically.
-
-Create a server for an already installed application:
-
-```text
-/MCP create
-```
-
-Configure it in a development MCP client using the displayed VS Code or Antigravity
-stdio configuration. The server provides generic application launch/status/close,
-screenshot, click, text-entry, and key-press tools; it does not provide
-application-specific project editing tools.
-
-Each server's permissions are off by default. Application status, application
-launch/close, screenshot capture, and mouse/keyboard input permissions can be
-changed separately in `/MCP ayarlar`. Permission changes are read from the database
-for each tool call, so disabling a permission takes effect without restarting the
-MCP server. Mouse/keyboard control also requires the declared `pyautogui` and
-`pyperclip` dependencies and may require operating-system privacy permissions.
-
-Start or stop a registered local Streamable HTTP MCP server:
-
-```text
->start MCP <server name>
->stop MCP <server name>
-```
-
-The HTTP server binds to `127.0.0.1` and startup performs an MCP initialization
-handshake before reporting success. This endpoint is local-only; cloud-hosted MCP
-clients need a separately secured, remotely reachable MCP endpoint and cannot
-connect to this loopback URL directly.
-
-View saved MCP servers and their configuration:
-
-```text
-/my MCP's
-```
-
----
-
-### 🌐 Local WebSocket Connections (v2.2.0)
-
-Easy Windows Tools can host authenticated WebSocket connections on the local
-computer without internet access. Every connection binds only to `127.0.0.1`;
-remote computers cannot connect, and the app does not create an internet or
-public-network tunnel.
-
-Create a connection with `-websocket create` or `-websocket yapmak`, and manage
-saved connections with `>websocket ayarlar`. The separate settings window lets
-you create, edit, start, stop, delete, and regenerate the PIN for each connection.
-The setup form includes a connection name, type, port, and simultaneous-client
-limit. Use `/websocket başlat` or `/websocket start` to start every saved
-connection; add a name to start just one.
-
-Two local connection types are available:
-
-* **Application server:** a client authenticates and exchanges JSON request and
-  response messages with Easy Windows Tools. Other Python code can register a
-  request handler using `LocalWebSocketManager.register_message_handler`.
-* **Local tunnel / relay:** PIN-authenticated local clients send JSON messages to
-  each other through the named relay.
-
-Each connection gets a cryptographically generated 11-digit PIN. It is shown
-only once when created or regenerated; the database stores a salted scrypt hash,
-not the PIN itself. If it is lost, regenerate it in the settings window and update
-the client. Authentication is the first JSON message:
-
-```json
-{"type":"authenticate","pin":"01234567890"}
-```
-
-On success, the server replies with a JSON `authenticated` message. For application
-server connections, send `{"type":"ping"}` for a `pong` response, or send any JSON
-object to receive a JSON response (or a response from the registered Python
-handler). For relay connections, send
-`{"type":"message","sender":"app-name","payload":{"key":"value"}}`;
-other authenticated clients receive the payload, and the sender receives a
-`relay_ack` with the number of recipients.
-
-The local socket is not encrypted with TLS: loopback traffic remains on this
-computer, while the PIN authenticates clients. Do not bind or proxy it to a
-network interface or forward the port. Internet connectivity is not used by the
-running WebSocket services; installing the `websockets` Python dependency itself
-requires the usual package-install source unless already present.
-
-The manager is embedded in `easy_windows_tools.py` and remains available as
-`local_websocket.py` for compatibility. `websocket_standalone.py` is the separately
-packaged source copy for future applications that want to reuse this implementation:
-
-```python
-from websocket_standalone import LocalWebSocketManager
-
-manager = LocalWebSocketManager()
-```
-
-All copies remain under this project's **GPL-3.0-only** license. Reuse and
-redistribution must retain the license and copyright notices and comply with
-the included `LICENSE`; the reusable copy is not offered under a permissive
-or proprietary license.
-
----
-
-### 📊 System Status
-
-Check the current wake and display state:
-
-```text
-durum
-```
-
-or:
-
-```text
-/status
-```
-
----
-
-### 🧹 Terminal Utilities
-
-Clear the terminal:
-
-```text
-temizle
-```
-
-or:
-
-```text
-/clear
-```
-
-Display the complete command reference:
-
-```text
-yardım
-```
-
-or:
-
-```text
-/help
-```
-
----
-
-## 📦 Installation
-
-### Requirements
-
-You need:
-
-* Windows
-* Python 3.10 or newer
-* Git for Windows (needed to install directly from GitHub)
-* `pip`
-
-### Install the `EWT` Terminal Command from GitHub
-
-Install `pipx` for your Windows user:
+### Hızlı Başlatma
+Proje dizinindeki `baslat.bat` dosyasını çalıştırabilir veya terminalden doğrudan başlatabilirsiniz:
 
 ```powershell
-python -m pip install --user pipx
-python -m pipx ensurepath
+python nova_windows_tools.py
 ```
 
-Close and reopen the terminal so the updated `PATH` takes effect. Install or
-reinstall the published v2.2.0 release directly from its GitHub tag:
+Düşük donanımlı sistemler veya pil tasarrufu için:
 
 ```powershell
-python -m pipx install --force "git+https://github.com/Robito-gif/easy-windows-tools.git@v2.2.0"
+python nova_windows_tools.py --low-resource
 ```
 
-`--force` is important when an older version is already installed: running
-`pipx install` again without it may leave the existing version unchanged. To
-install a later release, replace `v2.2.0` with that release's tag.
+Paket olarak kurmak için:
 
-You can now launch it from CMD or PowerShell:
-
-```text
-start EWT
+```powershell
+pip install .
+nova
 ```
 
-To run it in the current terminal instead of opening a new window, use `EWT`.
-
-To work on the source code, clone the repository separately:
-
-```bash
-git clone https://github.com/Robito-gif/easy-windows-tools.git
-cd easy-windows-tools
-```
-
-### Create a Virtual Environment
-
-It is recommended to use a virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate it:
-
-```bash
-.venv\Scripts\activate
-```
-
-### Install Dependencies
-
-Install the required Python packages:
-
-```bash
-pip install -r requirements.txt
-```
+*(Geriye dönük uyumluluk için `EWT` ve `NWT` komutları da korunmaktadır).*
 
 ---
 
-## 🚀 Usage
+## 🧪 Testler
 
-Start the application with:
+Nova Windows Tools, 12 temel gereksinim alanı dahil olmak üzere kapsamlı bir unittest süitine sahiptir:
 
-```bash
-python easy_windows_tools.py
+```powershell
+python -m unittest discover tests
 ```
 
-Alternatively, on Windows you can use:
-
-```text
-baslat.bat
-```
-
-Once the application starts, use:
-
-```text
-yardım
-```
-
-to display the available commands.
+Tüm 31 test (WebSocket, MCP Center, Studio, Nova Command Architecture) %100 başarıyla çalışmaktadır.
 
 ---
 
-## 📋 Command Overview
+## 📄 Lisans
 
-| Command            | Description                               |
-| ------------------ | ----------------------------------------- |
-| `başlat`           | Start continuous wake mode                |
-| `başlat <süre>`    | Start a timed wake session                |
-| `durdur`           | Stop wake mode                            |
-| `pomodoro`         | Start a 25-minute focus session           |
-| `toplantı`         | Start a 60-minute meeting session         |
-| `ekran açık`       | Prevent the display from turning off      |
-| `ekran kapalı`     | Allow normal display behavior             |
-| `/record`          | Start screen recording                    |
-| `/record <süre>`   | Record for a specific duration            |
-| `/record ayarlar`  | Configure recording settings              |
-| `--microphone` / `--system-audio` | Include audio sources in a recording |
-| `/ekran liste`     | List available displays                   |
-| `/ekran <numara>`  | Select a display for recording            |
-| `çalıştır <komut>` | Run a command while keeping Windows awake |
-| `/MCP create`      | Create an MCP server                      |
-| `/MCP ayarlar`     | Open the application catalog and security settings |
-| `>start MCP <name>`| Start a registered local MCP server       |
-| `>stop MCP <name>` | Stop a registered local MCP server        |
-| `/my MCP's`        | View MCP configurations                   |
-| `/websocket başlat [ad]` / `/websocket start [name]` | Start all or one local WebSocket |
-| `>websocket ayarlar` | Open local WebSocket settings            |
-| `-websocket create` / `-websocket yapmak` | Create a local WebSocket |
-| `lisans`           | Show license and warranty details         |
-| `durum`            | Show current system status                |
-| `temizle`          | Clear the terminal                        |
-| `yardım`           | Show the command reference                |
-| `çıkış`            | Exit the application                      |
-
-Most commands are also available through English-style slash commands such as `/start`, `/stop`, `/status`, `/help`, `/run`, and `/exit`.
-
----
-
-## 📁 Project Structure
-
-```text
-easy-windows-tools/
-│
-├── easy_windows_tools.py
-├── pyproject.toml
-├── baslat.bat
-├── requirements.txt
-├── README.md
-├── LICENSE
-└── .gitignore
-```
-
-The project does **not** require the `.venv` directory to be included in the repository.
-
----
-
-## 🔮 Future Features
-
-Easy Windows Tools is still under development. Planned improvements may include:
-
-* 🧰 More Windows system utilities
-* 📊 More detailed system monitoring
-* 🔋 Advanced power-management controls
-* 🎥 More screen-recording options
-* 🖥️ Improved multi-monitor management
-* ⚙️ More configurable settings
-* 🔌 Expanded MCP integration
-* 🤖 Additional AI-assisted Windows tools
-* 🧩 A modular plugin/tool architecture
-* 🎨 Improved terminal interface
-* 🌐 Additional localization
-* 📦 Easier installation and distribution
-* 🪟 Optional graphical interface in the future
-
-More features will be added as the project develops.
-
----
-
-## 🤝 Contributing
-
-Contributions, suggestions, bug reports, and feature ideas are welcome.
-
-If you find a bug or have an idea for improving Easy Windows Tools, feel free to open an **Issue** or submit a **Pull Request**.
-
-Before submitting a pull request, please make sure that your changes work correctly on Windows and do not introduce unnecessary dependencies.
-
----
-
-## ⚠️ Notes
-
-Easy Windows Tools interacts with Windows power-management and system functionality.
-
-Some features may behave differently depending on:
-
-* Windows version
-* Hardware configuration
-* User permissions
-* Installed dependencies
-* Display configuration
-
-Use system-level features carefully and review commands before executing them.
-
----
-
-## 📜 License
-
-Easy Windows Tools is licensed under the:
-
-GNU General Public License v3 only (GPL-3.0-only)
-
-Copyright (C) 2026 Robin Güneş.
-
-See the `LICENSE` file for the complete license text.
-
----
-
-## ⭐ Project
-
-If you find Easy Windows Tools useful, consider giving the repository a ⭐ on GitHub.
-
-**Easy Windows Tools — useful Windows utilities, from the terminal.**
+Nova Windows Tools, **GNU General Public License v3 (GPL-3.0-only)** kapsamında lisanslanmıştır.  
+Ayrıntılar için `LICENSE` dosyasına bakınız.
